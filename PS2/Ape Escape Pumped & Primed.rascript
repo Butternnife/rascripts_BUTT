@@ -59,10 +59,8 @@ function GridCoreStatus() => dword(0x51AB64)
 //          0x00 = Off
 //          0x01 = On
 function GadgetCheat() => byte(0x51ABF3)
-function AntiCheat(){
-    
-    all_of(range(0x0051abf3, 0x0051abfa,0x0051abfc,0x0051abfd,0x0051abfe,0x0051abff,0x0051ac00,0x0051ac01,0x0051ac02), b => byte(b) == 0)
-}
+//function FanclubCheat() { return range(0x0051abfc,0x0051ac02)}
+
 
 // $51B560: Stunclubs 1 Member's Card [8-Bit]
 //          
@@ -901,7 +899,114 @@ Tournament_Name = {
 
 }
 
+VS_TournamentID = {
+    
+    "1st Round": 0x00, 
+    "2nd Round": 0x01,
+    "Semi Final": 0x02,
+    "Final": 0x03,
+    "Marathon": 0x04,
+    "VehicleKing A": 0x05,
+    "VehicleKing B": 0x06,
+    "VehicleKing C": 0x07,
+    "Boat King": 0x08,
+    "WaterMech King": 0x09,
+    "Tank King": 0x0a,
+    "Match King": 0x0b,
+    "Course King": 0x0c,
+    "1st Round 1": 0x0d,
+    "1st Round 2": 0x0e,
+    "2nd Round 1": 0x0f,
+    "2nd Round 2": 0x10,
+    "Semi Final 1": 0x11,
+    "Semi Final 2": 0x12,
+    "Final 1": 0x13,
+    "Final 2": 0x14
+
+}
+
+
+
+CharacterID = {
+    
+    "Spike": 0x00,
+    "Monkey": 0x01,
+    "Professor": 0x02,
+    "Natalie": 0x03,
+    "Casi": 0x04,
+    "Helga": 0x05,
+    "MonkeyRed": 0x06,
+    "MonkeyBlue": 0x07,
+    "MonkeyBlack": 0x08,
+    "MonkeyGreen": 0x09,
+    "MonkeyBaby": 0xa,
+    "Pipotron Red": 0x0b,
+    "Pipotron Blue": 0x0c,
+    "Pipotron Yellow": 0x0d,
+    "Jake": 0x0e,
+    "Dark Jake": 0x0f
+}
+
+
+CurrentTourney = {
+    "Stunclubs 1": 0x00,
+    "Dragonfly 1": 0x01,
+    "Slingshot 1": 0x02,
+    "Boats 1": 0x03,
+    "VS Jake": 0x04,
+    "Hoops 1": 0x05,
+    "RC Cars 1":0x06,
+    "WaterMech 1": 0x07,
+    "Tanks 1": 0x08,
+    "Stunclubs 2": 0x09,
+    "Dragonfly 2": 0x0a,
+    "Slingshot 2": 0x0b,
+    "Boats 2": 0x0c,
+    "VS Specter": 0x0d,
+    "Hoops 2": 0x0e,
+    "RC Cars 2": 0x0f,
+    "WaterMech 2": 0x10,
+    "Tanks 2": 0x11,
+    "SF Match A": 0x12,
+    "SF Course A": 0x13,
+    "SF Match B": 0x14,
+    "VS Jake 2": 0x15,
+    "SF Match C": 0x16,
+    "SF Course B": 0x17,
+    "SF WaterMech": 0x18,
+    "F Match A": 0x19,
+    "F Course A": 0x1a,
+    "F Boats": 0x1b,
+    "VS Specter 2": 0x1c,
+    "F Match B": 0x1d,
+    "F Course B": 0x1e,
+    "F Tanks": 0x1f,
+    "Megabreak 1": 0x20,
+    "Megabreak 2": 0x21,
+    "Megabreak 3": 0x22,
+    "Megabreak 4": 0x23,
+    "VS Pipotron": 0x24,
+    "Gigabreak 1": 0x25,
+    "Gigabreak 2": 0x26,
+    "Gigabreak 3": 0x27,
+    "Gigabreak 4": 0x28,
+    "VS Jake 3": 0x29,
+    "Terabreak 1": 0x2a,
+    "Terabreak 2": 0x2b,
+    "Terabreak 3": 0x2c,
+    "Terabreak 4": 0x2d,
+    "VS Specter 3": 0x2e,
+    "Nano Grid 1": 0x2f,
+    "Nano Grid 2": 0x30,
+    "Nano Grid 3": 0x31,
+    "Nano Grid 4": 0x32,
+    "VS Grid Core": 0x33
+    
+    
+}
+
 StoryMode = 0x5
+
 
 function TournamentID() => dword(0x0051ebac)
 function MedleyID() => dword(0x5211E0)
@@ -911,8 +1016,8 @@ function TourneyCheevo(tourney_id) {
    
    return MenuID() == StoryMode && 
     TournamentID() == tourney_id &&
-    Delta((InGame())) == 0 &&
-    InGame() == 1
+    Delta(!InGame()) &&
+    InGame() 
 }
 
 
@@ -925,10 +1030,22 @@ achievement(
     title = "MechaboScriptTest",
     description = "Literally just PLAY Stunclubs 1",
     points = 5,
-    trigger = TourneyCheevo(Tournament_Name["Stunclubs 1"])&& AntiCheat()  
+    trigger = TourneyCheevo(Tournament_Name["Stunclubs 1"]) 
 
 
 )
+
+
+
+achievement(
+    title = "SkyFlyScriptTest",
+    description = "Literally just PLAY Stunclubs 1",
+    points = 5,
+    trigger = TourneyCheevo(Tournament_Name["Dragonfly 1"]) 
+
+
+)
+
 
 
 
@@ -1392,4 +1509,5 @@ achievement(
 
 
 */
+
 
