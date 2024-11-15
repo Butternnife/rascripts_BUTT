@@ -799,25 +799,7 @@ Custom = 0x01
 
 
 
-// $5BF958: Player 1 COM? [32-bit]
-//          
-//          Anything that is not 0x01 will make the player a COM
-function P1_COM() => dword(0x5BF958) != 1
 
-// $5BF9C4: Player 2 COM? [32-bit]
-//          
-//          Anything that is not 0x01 will make the player a COM
-function P2_COM() => dword(0x5BF9C4) != 1
-
-// $5BFA30: Player 3 COM? [32-bit]
-//          
-//          Anything that is not 0x01 will make the player a COM
-function P3_COM() => dword(0x5BFA30) != 1
-
-// $5BFA9C: Player 4 COM? [32-bit]
-//          
-//          Anything that is not 0x01 will make the player a COM
-function P4_COM() => dword(0x5BFA9C) != 1
 
 
 Menu_Screen = {
@@ -1060,11 +1042,11 @@ CurrentTourney = {
 
 StoryMode = 0x5
 
-g_character = dword(0x005bf94c)
-g_ingame = byte(0x005bf948)
-g_trial = byte(0x005bf949)
-g_difficulty = dword(0x005bf960)
-playerType = dword(0x005bf958)
+function g_character() => dword(0x005bf94c)
+function g_ingame() => byte(0x005bf948)
+function g_trial() => byte(0x005bf949)
+function g_difficulty() => dword(0x005bf960)
+function g_playerType() => dword(0x005bf958)
 
 
 function if_else(cond, v1, v2){
@@ -1084,15 +1066,11 @@ function if_else(cond, v1, v2){
 
 function P1(character, ingame, trial, playerType, difficulty){
 
-
-if_else (playerType == Player, g_difficulty == difficulty, always_true())
-
-    
-return
- g_character == character &&
-    g_ingame == ingame &&
-    g_trial == trial &&   
-    (playerType == COM || g_difficulty == difficulty)
+  
+return g_character() == character &&
+       g_ingame() == ingame &&   
+       (playerType == Player || g_difficulty() == difficulty) &&
+       (playerType == COM || g_trial() == trial)
 
  
 
@@ -1103,14 +1081,12 @@ return
 function P2(character, ingame, trial, playerType, difficulty){
 
 
-if_else (playerType+ 0x6c == Player, g_difficulty+ 0x6c == difficulty, always_true())
-
     
-return
- g_character + 0x6c == character &&
-    g_ingame+ 0x6c == ingame &&
-    g_trial+ 0x6c == trial &&   
-    (playerType == COM || g_difficulty == difficulty)
+return dword(g_character() + 0x6c) == character &&
+       byte(g_ingame() + 0x6c)  == ingame &&
+       byte(g_trial() +  0x6c) == trial    
+       
+  
 
  
 
@@ -1122,14 +1098,12 @@ return
 function P3(character, ingame, trial, playerType, difficulty){
 
 
-if_else (playerType+ 0xd8 == Player, g_difficulty+ 0xd8 == difficulty, always_true())
-
     
 return
- g_character + 0xd8 == character &&
+ g_character + dword(0xd8) == character &&
     g_ingame + 0xd8 == ingame &&
     g_trial + 0xd8 == trial &&   
-    (playerType + 0xd8 == COM || g_difficulty + 0xd8 == difficulty)
+    (playerType + 0xd8 == Player || g_difficulty + 0xd8 == difficulty)
 
  
 
@@ -1142,17 +1116,15 @@ return
 function P4(character, ingame, trial, playerType, difficulty){
 
 
-if_else (playerType + 0x144 == Player, g_difficulty+ 0x144 == difficulty, always_true())
 
     
 return
  g_character + 0x144 == character &&
     g_ingame + 0x144 == ingame &&
     g_trial + 0x144 == trial &&   
-    (playerType + 0x144 == COM || g_difficulty + 0x144 == difficulty)
+    (playerType + 0x144 == Player || g_difficulty + 0x144 == difficulty)
 
  
-
 
 }
 
@@ -1180,7 +1152,7 @@ achievement(
     title = "Casi Party",
     description = "Have all four players be Casi",
     points = 1,
-    trigger = P1(Casi, In, Trial, Player, Weak) 
+    trigger = P1(Casi, In, Custom, Player, Super) && P2(Casi, In, Custom, Player, Super)
     
     
 )
