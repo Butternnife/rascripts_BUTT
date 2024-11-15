@@ -701,15 +701,22 @@ function InGame() => byte(0x51EBCD)== 0x01
 
 
 // $5211F1: IDK BOSS Still In [8-bit]
-function BossResult() => byte(0x5211F1)
+function BossResult() => byte(0x5211F1) == 1
 
 // $5211F2: IDK Still In? [8-bit]
-function Result() => byte(0x5211F2)
+function Result() => byte(0x5211F2) == 1
 
 // $521208: Player 1 Points [32-bit]
 function P1_POINTS() => dword(0x521208)
 
-function P1_WINNER(){}
+function P1_WINNER(){
+    
+    Delta(P1_POINTS()) != P1_POINTS() &&
+    P1_POINTS() >= P2_POINTS &&
+    P1_POINTS() >= P3_POINTS &&
+    P1_POINTS() >= P4_POINTS 
+
+}
 
 // $521244: Player 2 Points [32-bit]
 function P2_POINTS() => dword(0x521244)
@@ -744,27 +751,73 @@ function TourneyID() => dword(0x5BF920)
 //          0x0d= Pipotron Yellow
 //          0x0e= Jake
 //          0x0f= Dark Jake
-function P1_CHAR() => dword(0x5BF94C)
+
+
+
+
+
+
+// Character
+Spike = 0x00
+Monkey = 0x01
+Professor = 0x02
+Natalie = 0x03
+Casi = 0x04
+Helga = 0x05
+MonkeyRed = 0x06
+MonkeyBlue = 0x07
+MonkeyBlack = 0x08
+MonkeyGreen = 0x09
+MonkeyBaby = 0x0a
+PipotronRed = 0x0b
+PipotronBlue = 0x0c
+PipotronYellow = 0x0d
+Jake = 0x0e
+DarkJake = 0xf
+
+
+
+
+// Difficulty   
+Weak = 0x00
+Normal = 0x01
+Strong = 0x02
+Super = 0x03
+
+// COM
+COM = 0x02
+Player = 0x01
+
+// In-Game?
+In = 0x01
+Out = 0x00
+
+
+// Trial
+Trial = 0x00
+Custom = 0x01
+
+
 
 // $5BF958: Player 1 COM? [32-bit]
 //          
 //          Anything that is not 0x01 will make the player a COM
-function P1_COM() => dword(0x5BF958)
+function P1_COM() => dword(0x5BF958) != 1
 
 // $5BF9C4: Player 2 COM? [32-bit]
 //          
 //          Anything that is not 0x01 will make the player a COM
-function P2_COM() => dword(0x5BF9C4)
+function P2_COM() => dword(0x5BF9C4) != 1
 
 // $5BFA30: Player 3 COM? [32-bit]
 //          
 //          Anything that is not 0x01 will make the player a COM
-function P3_COM() => dword(0x5BFA30)
+function P3_COM() => dword(0x5BFA30) != 1
 
 // $5BFA9C: Player 4 COM? [32-bit]
 //          
 //          Anything that is not 0x01 will make the player a COM
-function P4_COM() => dword(0x5BFA9C)
+function P4_COM() => dword(0x5BFA9C) != 1
 
 
 Menu_Screen = {
@@ -927,7 +980,7 @@ VS_TournamentID = {
 
 
 
-CharacterID = {
+Char = {
     
     "Spike": 0x00,
     "Monkey": 0x01,
@@ -1007,6 +1060,102 @@ CurrentTourney = {
 
 StoryMode = 0x5
 
+g_character = dword(0x005bf94c)
+g_ingame = byte(0x005bf948)
+g_trial = byte(0x005bf949)
+g_difficulty = dword(0x005bf960)
+playerType = dword(0x005bf958)
+
+
+function if_else(cond, v1, v2){
+    
+    if (cond) 
+    {
+        return v1
+    }
+    
+    return v2
+}
+
+
+
+
+
+
+function P1(character, ingame, trial, playerType, difficulty){
+
+
+if_else (playerType == Player, g_difficulty == difficulty, always_true())
+
+    
+return
+ g_character == character &&
+    g_ingame == ingame &&
+    g_trial == trial &&   
+    (playerType == COM || g_difficulty == difficulty)
+
+ 
+
+
+}
+
+
+function P2(character, ingame, trial, playerType, difficulty){
+
+
+if_else (playerType+ 0x6c == Player, g_difficulty+ 0x6c == difficulty, always_true())
+
+    
+return
+ g_character + 0x6c == character &&
+    g_ingame+ 0x6c == ingame &&
+    g_trial+ 0x6c == trial &&   
+    (playerType == COM || g_difficulty == difficulty)
+
+ 
+
+
+}
+
+
+
+function P3(character, ingame, trial, playerType, difficulty){
+
+
+if_else (playerType+ 0xd8 == Player, g_difficulty+ 0xd8 == difficulty, always_true())
+
+    
+return
+ g_character + 0xd8 == character &&
+    g_ingame + 0xd8 == ingame &&
+    g_trial + 0xd8 == trial &&   
+    (playerType + 0xd8 == COM || g_difficulty + 0xd8 == difficulty)
+
+ 
+
+
+}
+
+
+
+
+function P4(character, ingame, trial, playerType, difficulty){
+
+
+if_else (playerType + 0x144 == Player, g_difficulty+ 0x144 == difficulty, always_true())
+
+    
+return
+ g_character + 0x144 == character &&
+    g_ingame + 0x144 == ingame &&
+    g_trial + 0x144 == trial &&   
+    (playerType + 0x144 == COM || g_difficulty + 0x144 == difficulty)
+
+ 
+
+
+}
+
 
 function TournamentID() => dword(0x0051ebac)
 function MedleyID() => dword(0x5211E0)
@@ -1025,6 +1174,16 @@ Mechabo1Gifts = array_map(range(0, 2), i => byte(0x51B560 + (0x400 * PlayerPoint
 Mechabo1Gifts = array_map(Mechabo1Gifts, v => v / v)
 
 
+
+achievement(
+    
+    title = "Casi Party",
+    description = "Have all four players be Casi",
+    points = 1,
+    trigger = P1(Casi, In, Trial, Player, Weak) 
+    
+    
+)
 
 achievement(
     title = "MechaboScriptTest",
